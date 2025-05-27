@@ -1,39 +1,36 @@
-﻿
-namespace Tutorial5.DTOs;
+﻿namespace Tutorial5.DTOs;
 
 public class PatientWithPrescriptionsDto
 {
-    public int IdPatient     { get; set; }
-    public string FirstName  { get; set; }
-    public string LastName   { get; set; }
-    public DateTime BirthDate{ get; set; }
-    public List<PrescriptionDto> Prescriptions { get; set; } 
-        = new List<PrescriptionDto>();
+    public int IdPatient { get; set; }
+    public string FirstName { get; set; }
+    public string LastName  { get; set; }
+    public DateTime BirthDate { get; set; }
+
+    public List<PrescriptionDetailsDto> Prescriptions { get; set; }
 }
 
-public class PrescriptionDto
+public class PrescriptionDetailsDto
 {
-    public int    IdPrescription { get; set; }
-    public DateTime Date         { get; set; }
-    public DateTime DueDate      { get; set; }
-    public DoctorDto Doctor               { get; set; }
-    public List<MedicamentDto> Medicaments{ get; set; }
-        = new List<MedicamentDto>();
+    public int IdPrescription { get; set; }
+    public DateTime Date      { get; set; }
+    public DateTime DueDate   { get; set; }
+    public DoctorInfoDto Doctor { get; set; }
+    public List<MedicamentInfoDto> Medicaments { get; set; }
 }
 
-public class MedicamentDto
+public class DoctorInfoDto
 {
-    public int    IdMedicament { get; set; }
-    public string Name         { get; set; }
-    public string Description  { get; set; }
-    public string Type         { get; set; }
-    public int    Dose         { get; set; }
+    public int IdDoctor    { get; set; }
+    public string FirstName { get; set; }
+    public string LastName  { get; set; }
+    public string Email     { get; set; }
 }
 
-public class DoctorDto
+public class MedicamentInfoDto
 {
-    public int    IdDoctor   { get; set; }
-    public string FirstName  { get; set; }
-    public string LastName   { get; set; }
-    public string Email      { get; set; }
+    public int IdMedicament { get; set; }
+    public string Name      { get; set; }
+    public int Dose         { get; set; }
+    public string Description { get; set; }
 }

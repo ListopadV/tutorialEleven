@@ -7,9 +7,8 @@ namespace Tutorial5.Data
     {
         public DatabaseContext(DbContextOptions<DatabaseContext> options)
             : base(options)
-        {
-        }
-
+        {}
+        
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Prescription> Prescriptions { get; set; }
@@ -18,9 +17,14 @@ namespace Tutorial5.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Patient>().ToTable("Patient");
+            modelBuilder.Entity<Doctor>().ToTable("Doctor");
+            modelBuilder.Entity<Medicament>().ToTable("Medicament");
+            modelBuilder.Entity<Prescription>().ToTable("Prescription");
+            modelBuilder.Entity<PrescriptionMedicament>().ToTable("Prescription_Medicament");
+            
             base.OnModelCreating(modelBuilder);
 
-            // Таблица Prescription
             modelBuilder.Entity<Prescription>(entity =>
             {
                 entity.HasKey(e => e.Id);
@@ -44,7 +48,6 @@ namespace Tutorial5.Data
                       .IsRequired();
             });
 
-            // Таблица PrescriptionMedicament (join entity)
             modelBuilder.Entity<PrescriptionMedicament>(entity =>
             {
                 entity.HasKey(e => new { e.PrescriptionId, e.MedicamentId });
@@ -69,10 +72,9 @@ namespace Tutorial5.Data
                       .HasMaxLength(200);
             });
 
-            // Конфигурация сущностей Patient, Doctor, Medicament
             modelBuilder.Entity<Patient>(entity =>
             {
-                entity.HasKey(e => e.Id);
+                entity.HasKey(e => e.IdPatient);
                 entity.Property(e => e.FirstName)
                       .IsRequired()
                       .HasMaxLength(100);
@@ -86,7 +88,7 @@ namespace Tutorial5.Data
 
             modelBuilder.Entity<Doctor>(entity =>
             {
-                entity.HasKey(e => e.Id);
+                entity.HasKey(e => e.IdDoctor);
                 entity.Property(e => e.FirstName)
                       .IsRequired()
                       .HasMaxLength(100);
@@ -100,7 +102,7 @@ namespace Tutorial5.Data
 
             modelBuilder.Entity<Medicament>(entity =>
             {
-                entity.HasKey(e => e.Id);
+                entity.HasKey(e => e.IdMedicament);
                 entity.Property(e => e.Name)
                       .IsRequired()
                       .HasMaxLength(100);

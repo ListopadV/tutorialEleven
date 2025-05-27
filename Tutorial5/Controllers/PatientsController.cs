@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Tutorial5.DTOs;
-using Tutorial5.Data;
+using Tutorial5.Services;
 
 namespace Tutorial5.Controllers
 {
@@ -8,62 +7,27 @@ namespace Tutorial5.Controllers
     [Route("api/[controller]")]
     public class PatientsController : ControllerBase
     {
-        private readonly DatabaseContext _context;
+        private readonly IPatientService _patientService;
 
-        public PatientsController(DatabaseContext context)
+        public PatientsController(IPatientService patientService)
         {
-            _context = context;
+            _patientService = patientService;
         }
 
-        // GET api/patients/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPatientWithPrescriptions(int id)
         {
-            var patient = await _context.Patients
-                .AsNoTracking()
-                .Include(p => p.Prescriptions)
-                    .ThenInclude(pr => pr.Doctor)
-                .Include(p => p.Prescriptions)
-                    .ThenInclude(pr => pr.PrescriptionMedicaments)
-                        .ThenInclude(pm => pm.Medicament)
-                .FirstOrDefaultAsync(p => p.Id == id);
-
-            if (patient == null)
-                return NotFound();
-
-            var dto = new PatientWithPrescriptionsDto
+            try
             {
-                IdPatient = patient.Id,
-                FirstName = patient.FirstName,
-                LastName = patient.LastName,
-                BirthDate = patient.BirthDate,
-                Prescriptions = patient.Prescriptions
-                    .OrderBy(pr => pr.DueDate)
-                    .Select(pr => new PrescriptionDto
-                    {
-                        IdPrescription = pr.Id,
-                        Date = pr.Date,
-                        DueDate = pr.DueDate,
-                        Doctor = new DoctorDto
-                        {
-                            IdDoctor = pr.Doctor.Id,
-                            FirstName = pr.Doctor.FirstName,
-                            LastName = pr.Doctor.LastName,
-                            Email = pr.Doctor.Email
-                        },
-                        Medicaments = pr.PrescriptionMedicaments
-                            .Select(pm => new MedicamentDto
-                            {
-                                IdMedicament = pm.MedicamentId,
-                                Name = pm.Medicament.Name,
-                                Description = pm.Medicament.Description,
-                                Type = pm.Medicament.Type,
-                                Dose = pm.Dose,
-                            }).ToList()
-                    }).ToList()
-            };
-
-            return Ok(dto);
+                var dto = await _patientService.GetPatientWithPrescriptionsAsync(id);
+                if (dto == null)
+                    return NotFound($"Patient with Id {id} not found.");
+                return Ok(dto);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "An unexpected error occurred.");
+            }
         }
     }
 }
